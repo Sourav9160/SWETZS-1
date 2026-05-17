@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 
-export default function LoginPage() {
-  const { login } = useAuth();
+export default function RegisterPage() {
+  const { register } = useAuth();
   const router = useRouter();
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,10 +20,10 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
+      await register(username, email, password);
       router.push('/dex');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -37,13 +38,24 @@ export default function LoginPage() {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="scanline-effect" />
-        <p className="font-data-mono text-[10px] text-primary/60 uppercase mb-2">ACCESS_PROTOCOL</p>
-        <h2 className="font-display-lg text-headline-lg text-primary uppercase mb-8">Neural Login</h2>
+        <p className="font-data-mono text-[10px] text-primary/60 uppercase mb-2">NEW_OPERATOR</p>
+        <h2 className="font-display-lg text-headline-lg text-primary uppercase mb-8">Register</h2>
 
         {error && <p className="font-data-mono text-[10px] text-secondary mb-4">{error}</p>}
 
         <div className="space-y-6 mb-8">
-          <motion.div>
+          <div>
+            <label className="font-data-mono text-[10px] text-primary/60 uppercase">Username</label>
+            <input
+              type="text"
+              required
+              minLength={3}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full bg-transparent border-b border-primary/30 py-2 font-data-mono text-primary focus:outline-none focus:border-primary"
+            />
+          </div>
+          <div>
             <label className="font-data-mono text-[10px] text-primary/60 uppercase">Email</label>
             <input
               type="email"
@@ -52,12 +64,13 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-transparent border-b border-primary/30 py-2 font-data-mono text-primary focus:outline-none focus:border-primary"
             />
-          </motion.div>
+          </div>
           <div>
             <label className="font-data-mono text-[10px] text-primary/60 uppercase">Password</label>
             <input
               type="password"
               required
+              minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-transparent border-b border-primary/30 py-2 font-data-mono text-primary focus:outline-none focus:border-primary"
@@ -70,13 +83,13 @@ export default function LoginPage() {
           disabled={loading}
           className="w-full py-4 border border-primary/40 bg-primary/5 hover:bg-primary/10 text-primary font-ui-header uppercase tracking-widest disabled:opacity-50"
         >
-          {loading ? 'AUTHENTICATING...' : 'INITIATE SESSION'}
+          {loading ? 'CREATING...' : 'CREATE ACCOUNT'}
         </button>
 
         <p className="font-data-mono text-[10px] text-outline mt-6 text-center">
-          NO CREDENTIALS?{' '}
-          <Link href="/auth/register" className="text-primary hover:underline">
-            REGISTER
+          EXISTING OPERATOR?{' '}
+          <Link href="/auth/login" className="text-primary hover:underline">
+            LOGIN
           </Link>
         </p>
       </motion.form>
